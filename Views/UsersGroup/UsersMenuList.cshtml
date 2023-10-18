@@ -1,0 +1,81 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+
+@model IEnumerable<webAdmin.ViewModels.UsersGroupMenu>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "_BlankLayout";
+}
+<input type="hidden" id="admin_idx" value='@ViewData["AdminIdx"]' />
+<input type="hidden" id="users_group_idx" value='@ViewData["UsersGroupIdx"]' />
+<table class="table">
+	<thead>
+		<tr>
+			<th>
+				@Html.DisplayNameFor(model => model.name)
+			</th>
+            <th>
+				@Html.DisplayNameFor(model => model.controller)
+			</th>
+            <th>
+				@Html.DisplayNameFor(model => model.action)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.allow_type)
+			</th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var item in Model) {
+		<tr>
+			<td>
+                <div class="actions_request_value">
+					<span>@Html.DisplayFor(modelItem => item.name)</span>
+                </div>
+                <div class="actions_response_value">
+					<input type="text" id="edit_group_menu_name_form" class="form-control form-control-lg border-success" value="@Html.DisplayFor(modelItem => item.name)" maxlength='50'/>
+                    <span class="edit_group_menu_name_form_validate text-danger"></span>
+                </div>
+			</td>
+			<td>
+                <div class="actions_request_value">
+					<span>@Html.DisplayFor(modelItem => item.controller)</span>
+                </div>
+                <div class="actions_response_value">
+					<input type="text" id="edit_group_controller_form" class="form-control form-control-lg border-success" value="@Html.DisplayFor(modelItem => item.controller)" maxlength='50'/>
+                    <span class="edit_group_controller_form_validate text-danger"></span>
+                </div>
+			</td>
+            <td>
+                <div class="actions_request_value">
+					<span>@Html.DisplayFor(modelItem => item.action)</span>
+                </div>
+                <div class="actions_response_value">
+					<input type="text" id="edit_group_action_form" class="form-control form-control-lg border-success" value="@Html.DisplayFor(modelItem => item.action)" maxlength='50'/>
+                    <span class="edit_group_action_form_validate text-danger"></span>
+                </div>
+			</td>
+			<td>
+                <div class="actions_request_value">
+                    <span>@(item.allow_type == "r" ? @Localizer["Read"]: @Localizer["Write"])</span>
+                </div>
+                <div class="actions_response_value">
+                    @Html.DropDownList("select_allow_type", new List<SelectListItem>
+                    {
+                        new SelectListItem{ Text="Read", Value = "r" },
+                        new SelectListItem{ Text="Write", Value = "w" },
+                    }, new { @class = "form-select form-control-lg border-success", id = "edit_group_allow_type_form" })
+                </div>
+            </td>
+        </tr>
+		}
+	</tbody>
+</table>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script type="text/javascript">
+
+    $('.actions_response_icon').hide();
+    $('.actions_response_value').hide();
+
+</script>

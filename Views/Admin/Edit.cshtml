@@ -1,0 +1,239 @@
+﻿@using Microsoft.AspNetCore.Mvc.Localization
+@inject IViewLocalizer Localizer
+
+@model webAdmin.ViewModels.Admin
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<div class="container-fluid p-0">
+
+    <h1 class="h3 mb-3">@Localizer["Admin management"] > @Localizer["Admin list"] > @Localizer["Admin edit"]</h1>
+
+	<div class="row">
+        <div class="col-md-4 col-xl-3">
+			<div class="card">
+                <div class="card-body">
+                    <div class="m-sm-4">
+                        <input type="hidden" id="admin_idx" value="@ViewBag.admin_idx"/>
+                        <form asp-action="Edit">
+                            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                            <div class="mb-3">
+                                <label asp-for="user_id" class="control-label"></label>
+                                <input asp-for="user_id" class="form-control form-control-lg" placeholder="Enter your id" disabled/>
+                                <span asp-validation-for="user_id" class="text-danger"></span>
+                            </div>
+                            <div class="mb-3">
+                                <label asp-for="user_pw" class="control-label"></label>
+                                <input asp-for="user_pw" class="form-control form-control-lg" type="password" placeholder="Enter your password" />
+                                <span asp-validation-for="user_pw" class="text-danger"></span>
+                            </div>
+                            <div class="mb-3">
+								<label asp-for="user_pw_confirm" class="form-label"></label>
+								<input asp-for="user_pw_confirm" class="form-control form-control-lg" type="password" placeholder="Enter your Re-enter password" />
+								<span asp-validation-for="user_pw_confirm" class="text-danger"></span>
+							</div>
+                            <div class="mb-3">
+                                <label asp-for="name" class="control-label"></label>
+                                <input asp-for="name" class="form-control form-control-lg" placeholder="Enter your name" />
+                                <span asp-validation-for="name" class="text-danger"></span>
+                            </div>
+                            <div class="mb-3">
+                                <label asp-for="dept" class="control-label"></label>
+                                <input asp-for="dept" class="form-control form-control-lg" placeholder="Enter your department" />
+                                <span asp-validation-for="dept" class="text-danger"></span>
+                            </div>
+                            <div class="mb-3">
+                                <label asp-for="email" class="control-label"></label>
+                                <input asp-for="email" class="form-control form-control-lg" type="email" placeholder="Enter your email" />
+                                <span asp-validation-for="email" class="text-danger"></span>
+                            </div>
+                            <div class="mb-3">
+                                <label asp-for="status" class="control-label"></label>
+                                <select asp-items="ViewBag.status_list" class="form-select" id="status" name="status"></select>
+                                <span asp-validation-for="status" class="text-danger"></span>
+                            </div>
+                            <div class="mb-3">
+                                <label asp-for="users_group_idx" class="control-label"></label>
+                                <select asp-items="ViewBag.users_group_list" class="form-select" id="users_group_idx" name="users_group_idx">
+                                    <option value="0">@Localizer["none"]</option>
+                                </select>
+                                <span asp-validation-for="users_group_idx" class="text-danger"></span>
+                            </div>
+                            <div class="mb-3">
+                                <label asp-for="pw_error_count" class="control-label"></label>
+                                <input asp-for="pw_error_count" class="form-control form-control-lg" placeholder="Enter your passwrod error count" />
+                                <span asp-validation-for="pw_error_count" class="text-danger"></span>
+                            </div>
+                            <div class="mb-3">
+                                <label asp-for="pw_update_date" class="control-label"></label>
+                                <input asp-for="pw_update_date" asp-format="{0:yyyy-MM-dd HH:mm:ss}" class="form-control form-control-lg"/>
+                                <span asp-validation-for="pw_update_date" class="text-danger"></span>
+                            </div>
+                            <div class="mb-3">
+                                <label asp-for="reason" class="control-label"></label>
+                                <textarea asp-for="reason" class="form-control form-control-lg" rows="5" placeholder="Enter your reason"></textarea>
+                            </div>
+                            <div class="mb-3">
+                                <input type="submit" value="@Localizer["Edit"]" class="btn btn-primary" />
+                            </div>
+                        </form>
+                        <div>
+                            <a asp-action="Index">@Localizer["Back to list"]</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8 col-xl-9">
+            <div class="tab-content">
+                <div class="tab-pane fade show active" id="group" role="tabpanel">
+                    <div class="card">
+                        <div class="card-header">
+                            <h5 class="card-title mb-0">@Localizer["Group menu info"]</h5>
+                        </div>
+                        <div class="card-body" id="users_group_menu_list"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- BEGIN  modal -->
+        <div class="modal fade" id="sizedModalSm" tabindex="-1" role="dialog" aria-hidden="true">
+            <div class="modal-dialog modal-sm" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Warning</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body m-3">
+                        <input type="hidden" id="delete_group_idx" />
+                        <input type="hidden" id="delete_group_type" />
+                        <input type="hidden" id="admin_idx" />
+                        <h1 id="delete_group_name"></h1>
+                        <p class="mb-0" id="delete_group_ment"></p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" id="delete_group_button" class="btn btn-danger">Delete</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- END  modal -->
+    </div>
+</div>
+<script src="~/lib/jquery/dist/jquery.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+<script type="text/javascript">
+
+    var activeIdx = 0;
+
+    $('.actions_response_icon').hide();
+    $('.actions_response_value').hide();
+
+    function usersGroupMenuListView(idx, admin_idx) {
+
+        $.ajax({
+            url: '/UsersGroup/UsersGroupMenuList/' + idx + '/' + admin_idx,
+            type: 'GET',
+            timeout: 3000,
+            async: true,
+            data: {},
+            error: function (err) {
+                alert(
+                    "errorCode : " + err.status + "\n"
+                    + "errorText : " + err.statusText + "\n"
+                    + "Result : " + err
+                );
+            },
+            beforeSend: function () {
+                var width = 0;
+                var height = 0;
+                var left = 0;
+                var top = 0;
+
+                width = 50;
+                height = 50;
+
+                top = ($(window).height() - height) / 2 + $(window).scrollTop();
+                left = ($(window).width() - width) / 2 + $(window).scrollLeft();
+
+                if ($("#div_ajax_load_image").length != 0) {
+                    $("#div_ajax_load_image").css({
+                        "top": top + "px",
+                        "left": left + "px"
+                    });
+                    $("#div_ajax_load_image").show();
+                }
+                else {
+                    $('body').append('<div id="div_ajax_load_image" style="position:absolute; top:' + top + 'px; left:' + left + 'px; width:' + width + 'px; height:' + height + 'px; z-index:9999; background:#f0f0f0; filter:alpha(opacity=50); opacity:alpha*0.5; margin:auto; padding:0; "><img src="/img/loaders/ajax-loader.gif" style="width:50px; height:50px;"></div>');
+                }
+            },
+            success: function (data) {
+                $("#users_group_menu_list").html(data);
+                feather.replace();
+            },
+            complete: function () {
+                $("#div_ajax_load_image").hide();
+            }
+        });
+    }
+
+    usersGroupMenuListView($('#users_group_idx').val(), $('#admin_idx').val());
+
+    $('#delete_group_button').click(function () {
+
+        myModal.hide();
+
+        var idx = $('#delete_group_idx').val();
+        var type = $('#delete_group_type').val();
+        var admin_idx = $('#admin_idx').val();
+
+        var url = "/UsersGroup/DeleteGroupMenu/" + idx;
+
+        var formData = new FormData();
+        formData.append("id", idx);
+        formData.append("admin_idx", admin_idx);
+
+        $.ajax({
+            type: 'POST',
+            url: url,
+            data: formData,
+            processData: false,
+            contentType: false,
+            error: function (err) {
+                toastr.error(err.statusText);
+                console.log(err);
+            }
+        }).done(function (response) {
+            console.log(response);
+
+            if (response.status === "success") {
+
+                $("#sizedModalSm").removeClass("in");
+                $('body').removeClass('modal-open');
+                $('body').css('padding-right', '');
+                $(".modal-backdrop").remove();
+                $("#sizedModalSm").hide();
+
+                if (response.code == 0) {
+                    $("#users_group_idx").val("0").prop("selected", true);
+                }
+
+                toastr.success(response.message);
+
+                usersGroupMenuListView($('#users_group_idx').val(), admin_idx);
+
+            } else {
+                toastr.error(response.message);
+            }
+        });
+    });
+    
+</script>
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
